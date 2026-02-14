@@ -150,19 +150,27 @@ class AppWindow(ctk.CTk):
         button_frame = ctk.CTkFrame(main_frame)
         button_frame.pack(fill="x", pady=(10, 0))
 
+        self.api_key_button = ctk.CTkButton(
+            button_frame,
+            text="API 金鑰",
+            command=self._show_api_key_dialog,
+            width=100
+        )
+        self.api_key_button.pack(side="left", padx=(20, 10), pady=15)
+
         self.save_button = ctk.CTkButton(
             button_frame,
             text="儲存設定",
             command=self._save_settings,
-            width=150
+            width=100
         )
-        self.save_button.pack(side="left", padx=(20, 10), pady=15)
+        self.save_button.pack(side="left", padx=(0, 10), pady=15)
 
         self.exit_button = ctk.CTkButton(
             button_frame,
             text="退出",
             command=self._on_exit,
-            width=150,
+            width=100,
             fg_color="#F44336",
             hover_color="#D32F2F"
         )
@@ -180,35 +188,61 @@ class AppWindow(ctk.CTk):
         """顯示 API 金鑰輸入對話框"""
         dialog = ctk.CTkToplevel(self)
         dialog.title("設定 API 金鑰")
-        dialog.geometry("400x200")
+        dialog.geometry("450x250")
         dialog.resizable(False, False)
 
         # 設為模態視窗
         dialog.transient(self)
         dialog.grab_set()
 
+        # 取得目前金鑰（如果有）
+        current_key = self.config.get_api_key()
+        key_hint = ""
+        if current_key and "." in current_key:
+            parts = current_key.split(".")
+            # 顯示前 4 位和後 4 位，中間用 * 隱藏
+            key_id = parts[0]
+            if len(key_id) > 8:
+                key_hint = f"{key_id[:4]}{'*' * (len(key_id) - 8)}{key_id[-4:]}.{parts[1][:4]}***"
+            else:
+                key_hint = f"{key_id[:2]}***.{parts[1][:2]}***"
+
         # 說明文字
+        info_text = "請輸入您的 ZhipuAI API 金鑰\n(格式: id.secret)"
+        if current_key:
+            info_text = f"目前金鑰: {key_hint}\n\n請輸入新的 API 金鑰\n(格式: id.secret)"
+
         info_label = ctk.CTkLabel(
             dialog,
-            text="請輸入您的 Z.AI API 金鑰\n(格式: id.secret)",
-            font=ctk.CTkFont(size=14)
+            text=info_text,
+            font=ctk.CTkFont(size=12)
         )
-        info_label.pack(pady=(30, 20))
+        info_label.pack(pady=(25, 15))
 
         # 輸入框
         api_key_entry = ctk.CTkEntry(
             dialog,
             placeholder_text="id.secret",
-            width=350,
+            width=380,
             show="*"
         )
-        api_key_entry.pack(pady=(0, 20))
+        api_key_entry.pack(pady=(0, 15))
         api_key_entry.focus()
+
+        # 提示標籤
+        hint_label = ctk.CTkLabel(
+            dialog,
+            text="前往 https://open.bigmodel.cn/ 取得 API 金鑰",
+            font=ctk.CTkFont(size=10),
+            text_color="gray"
+        )
+        hint_label.pack(pady=(0, 10))
 
         def save_api_key():
             api_key = api_key_entry.get().strip()
-            if api_key and "." in api_key:  # Z.AI key format: id.secret
+            if api_key and "." in api_key:  # ZhipuAI key format: id.secret
                 self.config.set_api_key(api_key)
+                self._show_status("✓ API 金鑰已更新", self.COLOR_IDLE)
                 dialog.destroy()
                 self._initialize_components()
             else:
@@ -219,14 +253,25 @@ class AppWindow(ctk.CTk):
 
         api_key_entry.bind("<Return>", on_submit)
 
-        # 確認按鈕
+        # 按鈕區
+        button_frame = ctk.CTkFrame(dialog, fg_color="transparent")
+        button_frame.pack(pady=10)
+
+        cancel_button = ctk.CTkButton(
+            button_frame,
+            text="取消",
+            command=dialog.destroy,
+            width=100
+        )
+        cancel_button.pack(side="left", padx=5)
+
         confirm_button = ctk.CTkButton(
-            dialog,
+            button_frame,
             text="確認",
             command=save_api_key,
-            width=150
+            width=100
         )
-        confirm_button.pack(pady=10)
+        confirm_button.pack(side="left", padx=5)
 
     def _initialize_components(self):
         """初始化轉錄器與快捷鍵"""
