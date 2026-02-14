@@ -47,7 +47,7 @@ class AppWindow(ctk.CTk):
     def _setup_window(self):
         """設定視窗屬性"""
         self.title("語音轉文字工具")
-        self.geometry("400x350")
+        self.geometry("400x380")
         self.resizable(False, False)
 
         # 設定外觀主題
