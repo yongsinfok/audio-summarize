@@ -5,8 +5,8 @@
 ## 功能特點
 
 - **全域快捷鍵**: 按 `Right Alt + Space` 即可開始/停止錄音
-- **自動轉錄**: 使用 OpenAI Whisper (whisper-1) 進行語音轉文字
-- **智能潤飾**: 使用 GPT-4o-mini 去除贅字並整理語句
+- **自動轉錄**: 使用 Z.AI GLM-ASR-2512 進行語音轉文字
+- **智慧分割**: 自動將長音訊分割成 30 秒片段處理
 - **自動複製**: 轉錄完成後自動複製到剪貼簿
 - **麥克風選擇**: 支援多麥克風裝置選擇
 - **超時保護**: 可設定 1-120 分鐘的自動停止時間
@@ -17,7 +17,7 @@
 - **作業系統**: Windows 10/11
 - **Python**: 3.10 ~ 3.13 (**不支援 3.14**)
 - **麥克風**: 至少一個錄音裝置
-- **網路**: 需要連網以呼叫 OpenAI API
+- **網路**: 需要連網以呼叫 Z.AI API
 
 > ⚠️ **重要提示**: 如果您使用 Python 3.14，PyAudio 無法正常安裝。請降級到 Python 3.13 或使用 conda 環境。
 
@@ -30,7 +30,7 @@
 ### 2. 下載專案
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/yongsinfok/audio-summarize.git
 cd audio-summarize
 ```
 
@@ -62,11 +62,11 @@ pip install -r requirements.txt
 2. 下載符合您 Python 版本的 wheel 檔案
 3. 執行 `pip install <下載的檔案名稱.whl>`
 
-### 4. 取得 OpenAI API 金鑰
+### 4. 取得 Z.AI API 金鑰
 
-1. 前往 [OpenAI Platform](https://platform.openai.com/api-keys)
-2. 登入並建立新的 API 金鑰
-3. 複製金鑰 (以 `sk-` 開頭)
+1. 前往 [Z.AI Platform](https://open.zai.ai/)
+2. 註冊並取得 API 金鑰 (格式: `id.secret`)
+3. 選擇 Lite 或更高套餐以使用 GLM-ASR-2512 模型
 
 ## 使用方法
 
@@ -76,7 +76,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-首次啟動時，程式會要求您輸入 OpenAI API 金鑰。
+首次啟動時，程式會要求您輸入 Z.AI API 金鑰。
 
 ### 設定麥克風與超時時間
 
@@ -96,6 +96,7 @@ python main.py
 
 - 程式視窗可以最小化到工作列，不會影響全域快捷鍵運作
 - 錄音檔案會暫存在 `~/.audio-summarize/temp/` 目錄下，處理完成後會自動刪除
+- 長音訊會自動分割成 30 秒片段進行轉錄
 - 建議在安靜環境下錄音以獲得最佳轉錄效果
 
 ## 快捷鍵
@@ -113,11 +114,27 @@ audio-summarize/
 ├── ui/                  # 使用者介面模組
 ├── core/                # 核心功能模組
 │   ├── recorder.py      # 錄音管理
-│   ├── transcriber.py   # 轉錄處理
+│   ├── transcriber.py   # 轉錄處理 (Z.AI GLM-ASR-2512)
 │   └── hotkey.py        # 全域快捷鍵
 └── utils/               # 工具模組
     ├── config.py        # 設定管理
     └── clipboard.py     # 剪貼簿操作
+```
+
+## 技術說明
+
+### Z.AI GLM-ASR-2512
+
+本專案使用 Z.AI 的 GLM-ASR-2512 模型進行語音轉文字：
+
+- **優點**: 內建上下文理解，轉錄結果直接可用，無需額外潤飾
+- **限制**: 單次請求最長 30 秒
+- **解決方案**: 實作自動音訊分割，長音訊會自動分段處理後合併
+
+### 音訊處理流程
+
+```
+錄音 → WAV 格式 (16kHz) → 分割成 30 秒片段 → 並行轉錄 → 合併結果 → 複製到剪貼簿
 ```
 
 ## 故障排除
@@ -131,8 +148,8 @@ audio-summarize/
 ### 轉錄失敗
 
 - 確認網路連線正常
-- 確認 OpenAI API 金鑰有效且有足夠額度
-- 檢查錄音檔案是否過大 (建議單次錄音不超過 25MB)
+- 確認 Z.AI API 金鑰有效且有足夠額度
+- 檢查錄音檔案是否過大 (單次片段不超過 25MB)
 
 ### 快捷鍵無效
 

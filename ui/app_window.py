@@ -190,7 +190,7 @@ class AppWindow(ctk.CTk):
         # 說明文字
         info_label = ctk.CTkLabel(
             dialog,
-            text="請輸入您的 OpenAI API 金鑰\n(sk-...)",
+            text="請輸入您的 Z.AI API 金鑰\n(格式: id.secret)",
             font=ctk.CTkFont(size=14)
         )
         info_label.pack(pady=(30, 20))
@@ -198,7 +198,7 @@ class AppWindow(ctk.CTk):
         # 輸入框
         api_key_entry = ctk.CTkEntry(
             dialog,
-            placeholder_text="sk-...",
+            placeholder_text="id.secret",
             width=350,
             show="*"
         )
@@ -207,7 +207,7 @@ class AppWindow(ctk.CTk):
 
         def save_api_key():
             api_key = api_key_entry.get().strip()
-            if api_key.startswith("sk-"):
+            if api_key and "." in api_key:  # Z.AI key format: id.secret
                 self.config.set_api_key(api_key)
                 dialog.destroy()
                 self._initialize_components()
