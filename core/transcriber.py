@@ -9,8 +9,9 @@ import io
 import tempfile
 import os
 
-# Z.AI API 設定
-ZAI_API_URL = "https://api.z.ai/api/paas/v4/audio/transcriptions"
+# Z.AI (智譜 AI) API 設定
+# API endpoint 來自: https://open.bigmodel.cn/api/paas/v4/audio/transcriptions
+ZAI_API_URL = "https://open.bigmodel.cn/api/paas/v4/audio/transcriptions"
 ZAI_MODEL = "glm-asr-2512"
 # GLM-ASR-2512 限制：最長 30 秒
 MAX_AUDIO_DURATION = 30  # 秒
@@ -85,10 +86,6 @@ class Transcriber:
         """
         self.api_key = api_key
         self.segmenter = AudioSegmenter()
-        self.headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "multipart/form-data"
-        }
 
     def _transcribe_chunk(self, audio_data: bytes) -> Optional[str]:
         """
@@ -101,16 +98,19 @@ class Transcriber:
             Optional[str]: 轉錄後的文字，失敗回傳 None
         """
         try:
-            # 準備檔案
+            # 準備檔案 - 使用 multipart/form-data 格式
             files = {
                 'file': ('audio.wav', audio_data, 'audio/wav')
             }
             data = {
-                'model': ZAI_MODEL
+                'model': ZAI_MODEL,
+                'stream': 'false'
             }
 
-            # 移除 Content-Type，讓 requests 自動處理 multipart boundary
-            headers = {"Authorization": f"Bearer {self.api_key}"}
+            # 設定 headers
+            headers = {
+                "Authorization": f"Bearer {self.api_key}"
+            }
 
             response = requests.post(
                 ZAI_API_URL,
@@ -122,6 +122,7 @@ class Transcriber:
 
             if response.status_code == 200:
                 result = response.json()
+                # 回應格式: {"text": "轉錄文字", "request_id": "..."}
                 return result.get('text', '')
             else:
                 print(f"Z.AI API 錯誤: {response.status_code} - {response.text}")
@@ -147,6 +148,8 @@ class Transcriber:
         if not chunks:
             print("無法分割音訊檔案")
             return None
+
+        print(f"音訊已分割成 {len(chunks)} 個片段，開始轉錄...")
 
         # 轉錄每個片段
         transcripts = []
