@@ -121,15 +121,28 @@ class WhisperLocalTranscriber:
                 print(f"音訊檔案不存在: {audio_file}")
                 return None
 
-            # 使用絕對路徑並確認格式正確
-            filepath = str(audio_file.resolve())
-            print(f"正在轉錄檔案: {filepath}")
+            print(f"正在轉錄檔案: {audio_file}")
 
+            # 直接載入音訊陣列，避免 ffmpeg 依賴
+            import numpy as np
+
+            # 使用 wave 讀取音訊
+            import wave
+            with wave.open(str(audio_file), "rb") as wf:
+                frames = wf.getnframes()
+                rate = wf.getframerate()
+                # 讀取音訊資料
+                audio_data = wf.readframes(frames)
+
+            # 轉換為 numpy 陣列
+            audio_array = np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
+
+            # 直接使用 numpy 陣列進行轉錄
             result = self._whisper_model.transcribe(
-                filepath,
+                audio_array,
                 language="zh",  # 中文
                 task="transcribe",
-                fp16=False  # CPU 不支援 FP16，強制使用 FP32
+                fp16=False  # CPU 不支援 FP16
             )
             return result.get("text", "").strip()
         except Exception as e:
