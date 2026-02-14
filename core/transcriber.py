@@ -115,14 +115,27 @@ class WhisperLocalTranscriber:
         """
         try:
             self._load_model()
+
+            # 確保檔案存在
+            if not audio_file.exists():
+                print(f"音訊檔案不存在: {audio_file}")
+                return None
+
+            # 使用絕對路徑並確認格式正確
+            filepath = str(audio_file.resolve())
+            print(f"正在轉錄檔案: {filepath}")
+
             result = self._whisper_model.transcribe(
-                str(audio_file),
+                filepath,
                 language="zh",  # 中文
-                task="transcribe"
+                task="transcribe",
+                fp16=False  # CPU 不支援 FP16，強制使用 FP32
             )
             return result.get("text", "").strip()
         except Exception as e:
-            print(f"Whisper 轉錄失敗: {e}")
+            print(f"Whisper 轉錄失敗: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
 
 
