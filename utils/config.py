@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
 
 # 設定檔路徑
@@ -37,7 +37,7 @@ class ConfigManager:
 
         # 使用使用者名稱與機器名稱產生鹽值
         salt = f"{getpass.getuser()}_{platform.node()}".encode()
-        kdf = PBKDF2(
+        kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
             salt=salt,
