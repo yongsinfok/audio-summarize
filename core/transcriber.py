@@ -9,7 +9,7 @@ import tempfile
 import os
 
 # Z.AI (智譜 AI) API 設定
-ZAI_MODEL = "glm-asr"  # 官方 SDK 模型名稱
+ZAI_MODEL = "glm-asr-2512"  # 模型名稱
 MAX_AUDIO_DURATION = 30  # 秒 - GLM-ASR 單次請求最長 30 秒
 
 
