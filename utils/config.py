@@ -19,6 +19,8 @@ DEFAULT_CONFIG = {
     "timeout_minutes": 30,
     "selected_microphone": None,
     "hotkey": "right alt + space",
+    "transcription_engine": "whisper_local",  # whisper_local, groq
+    "whisper_model": "base",  # tiny, base, small, medium, large
 }
 
 
@@ -104,3 +106,23 @@ class ConfigManager:
     def get_microphone(self) -> str | None:
         """取得選擇的麥克風"""
         return self.config.get("selected_microphone")
+
+    def set_transcription_engine(self, engine: str):
+        """設定轉錄引擎"""
+        self.config["transcription_engine"] = engine
+        self._save_config()
+
+    def get_transcription_engine(self) -> str:
+        """取得轉錄引擎"""
+        return self.config.get("transcription_engine", "whisper_local")
+
+    def set_whisper_model(self, model: str):
+        """設定 Whisper 模型"""
+        valid_models = ["tiny", "base", "small", "medium", "large"]
+        if model in valid_models:
+            self.config["whisper_model"] = model
+            self._save_config()
+
+    def get_whisper_model(self) -> str:
+        """取得 Whisper 模型"""
+        return self.config.get("whisper_model", "base")
