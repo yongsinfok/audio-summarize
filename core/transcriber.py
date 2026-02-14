@@ -1,15 +1,15 @@
 """
-轉錄模組 - 處理 Z.AI GLM-ASR 音訊轉文字
+轉錄模組 - 處理 Z.AI GLM-ASR-2512 音訊轉文字
 """
+import requests
 from pathlib import Path
 from typing import Optional, List
 import wave
 import io
-import tempfile
-import os
 
-# Z.AI (智譜 AI) API 設定
-ZAI_MODEL = "glm-asr-2512"  # 模型名稱
+# Z.AI API 設定
+ZAI_API_URL = "https://api.z.ai/api/paas/v4/audio/transcriptions"
+ZAI_MODEL = "glm-asr-2512"
 MAX_AUDIO_DURATION = 30  # 秒 - GLM-ASR 單次請求最長 30 秒
 
 
@@ -71,7 +71,7 @@ class AudioSegmenter:
 
 
 class Transcriber:
-    """轉錄器 - 使用 Z.AI GLM-ASR 進行音訊轉文字"""
+    """轉錄器 - 使用 Z.AI GLM-ASR-2512 進行音訊轉文字"""
 
     def __init__(self, api_key: str):
         """
@@ -82,20 +82,6 @@ class Transcriber:
         """
         self.api_key = api_key
         self.segmenter = AudioSegmenter()
-        self._client = None
-        self._init_client()
-
-    def _init_client(self):
-        """初始化 ZhipuAI 客戶端"""
-        try:
-            from zhipuai import ZhipuAI
-            self._client = ZhipuAI(api_key=self.api_key)
-        except ImportError:
-            print("警告: zhipuai 套件未安裝，請執行: pip install zhipuai")
-            self._client = None
-        except Exception as e:
-            print(f"初始化 ZhipuAI 客戶端失敗: {e}")
-            self._client = None
 
     def _transcribe_chunk(self, audio_data: bytes) -> Optional[str]:
         """
@@ -107,30 +93,36 @@ class Transcriber:
         Returns:
             Optional[str]: 轉錄後的文字，失敗回傳 None
         """
-        if self._client is None:
-            print("ZhipuAI 客戶端未初始化")
-            return None
-
         try:
-            # 使用官方 SDK
-            audio_file = io.BytesIO(audio_data)
-            audio_file.name = "audio.wav"
+            # 準備檔案 - 使用 multipart/form-data 格式
+            files = {
+                'file': ('audio.wav', audio_data, 'audio/wav')
+            }
+            data = {
+                'model': ZAI_MODEL,
+                'stream': 'false'
+            }
 
-            response = self._client.audio.transcriptions.create(
-                model=ZAI_MODEL,
-                file=audio_file,
-                stream=False
+            # 設定 headers
+            headers = {
+                "Authorization": f"Bearer {self.api_key}"
+            }
+
+            response = requests.post(
+                ZAI_API_URL,
+                files=files,
+                data=data,
+                headers=headers,
+                timeout=60
             )
 
-            # SDK 回應格式: 回傳一個物件串列
-            # 每個物件有 choices[0].message.content 包含轉錄文字
-            if response and len(response) > 0:
-                result = response[0]
-                if hasattr(result, 'choices') and len(result.choices) > 0:
-                    content = result.choices[0].message.content
-                    return content
-
-            return None
+            if response.status_code == 200:
+                result = response.json()
+                # 回應格式: {"text": "轉錄文字", "request_id": "..."}
+                return result.get('text', '')
+            else:
+                print(f"Z.AI API 錯誤: {response.status_code} - {response.text}")
+                return None
 
         except Exception as e:
             print(f"轉錄片段失敗: {type(e).__name__}: {e}")
