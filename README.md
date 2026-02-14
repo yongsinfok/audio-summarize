@@ -15,9 +15,11 @@
 ## 系統需求
 
 - **作業系統**: Windows 10/11
-- **Python**: 3.10 或更高版本
+- **Python**: 3.10 ~ 3.13 (**不支援 3.14**)
 - **麥克風**: 至少一個錄音裝置
 - **網路**: 需要連網以呼叫 OpenAI API
+
+> ⚠️ **重要提示**: 如果您使用 Python 3.14，PyAudio 無法正常安裝。請降級到 Python 3.13 或使用 conda 環境。
 
 ## 安裝步驟
 
@@ -40,17 +42,24 @@ pip install -r requirements.txt
 
 #### 關於 PyAudio 的安裝
 
-如果在安裝 `pyaudio` 時遇到問題，請嘗試以下方式：
+**Python 3.14 使用者**: PyAudio 目前不支援 Python 3.14，請使用以下任一方式：
 
-**方式一: 使用預編譯的 wheel 檔案**
+**方式一: 使用 Conda (推薦)**
 ```bash
-pip install pipwin
-pipwin install pyaudio
+# 安裝 Miniconda 或 Anaconda 後
+conda create -n audio-summarize python=3.13
+conda activate audio-summarize
+conda install pyaudio
+pip install -r requirements.txt
 ```
 
-**方式二: 手動下載 wheel 檔案**
-1. 前往 [https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
-2. 下載符合您 Python 版本的 wheel 檔案 (如 `PyAudio‑0.2.14‑cp311‑cp311‑win_amd64.whl`)
+**方式二: 降級到 Python 3.13**
+- 從 [python.org](https://www.python.org/downloads/) 下載 Python 3.13
+- 使用 3.13 版本重新安裝
+
+**方式三: 手動下載 wheel 檔案 (Python 3.10-3.13)**
+1. 前往 [https://github.com/intxcc/pyaudio_portaudio/releases](https://github.com/intxcc/pyaudio_portaudio/releases)
+2. 下載符合您 Python 版本的 wheel 檔案
 3. 執行 `pip install <下載的檔案名稱.whl>`
 
 ### 4. 取得 OpenAI API 金鑰
